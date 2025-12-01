@@ -1,0 +1,107 @@
+:root {
+    --button-primary: #007acc;
+    --button-primary-dark: #005ea6;
+    --button-danger: #d93025;
+    --button-danger-dark: #b0231f;
+}
+
+button,
+.action-btn,
+.inline-form button {
+    background-color: var(--button-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 2px;
+    font-size: 14px;
+    padding: 6px 14px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+button:hover,
+.action-btn:hover,
+.inline-form button:hover {
+    background-color: var(--button-primary-dark);
+}
+
+.logout-button,
+button.btn-danger {
+    background-color: var(--button-danger);
+}
+
+.logout-button:hover,
+button.btn-danger:hover {
+    background-color: var(--button-danger-dark);
+}
+
+button:disabled,
+.inline-form button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+body {
+    background-color: #ffffff;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #222222;
+    margin: 24px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th,
+td {
+    border: 1px solid #999999;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f8f8f8;
+}
+
+.toolbar,
+.controls {
+    margin-bottom: 12px;
+}
+
+.toolbar a,
+.controls a {
+    margin-right: 8px;
+}
+
+.result {
+    padding: 10px;
+    background-color: #e7f4ff;
+    border: 1px solid #9ac1ff;
+    width: fit-content;
+}
+
+.session {
+    margin-bottom: 12px;
+}
+
+.session form {
+    display: inline;
+    margin-left: 16px;
+}
+
+.inline-form {
+    display: inline;
+    margin: 0;
+}
+
+.links {
+    margin-top: 16px;
+}
+
+img {
+    max-width: 300px;
+}

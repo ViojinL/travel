@@ -1,9 +1,13 @@
 package org.x.travel.entity;
 
+import java.time.LocalDateTime;
+
 public class City {
     private int id;
     private String name;
     private String province;
+    private Integer createdBy;
+    private LocalDateTime createdAt;
 
     public City() {
     }
@@ -12,6 +16,22 @@ public class City {
         this.id = id;
         this.name = name;
         this.province = province;
+    }
+
+    public Integer getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Integer createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public int getId() {

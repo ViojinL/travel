@@ -1,6 +1,7 @@
 package org.x.travel.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class Attraction {
     private int id;
@@ -9,6 +10,8 @@ public class Attraction {
     private BigDecimal price;
     private String description;
     private String imagePath;
+    private Integer createdBy;
+    private LocalDateTime createdAt;
 
     public Attraction() {
     }
@@ -20,6 +23,22 @@ public class Attraction {
         this.price = price;
         this.description = description;
         this.imagePath = imagePath;
+    }
+
+    public Integer getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Integer createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public int getId() {

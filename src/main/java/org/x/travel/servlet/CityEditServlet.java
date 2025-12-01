@@ -1,31 +1,63 @@
 package org.x.travel.servlet;
 
+import java.io.IOException;
+
+import org.x.travel.entity.City;
+import org.x.travel.entity.User;
+import org.x.travel.service.CityService;
+import org.x.travel.service.impl.CityServiceImpl;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.x.travel.util.DBUtil;
-
-import java.io.IOException;
-import java.util.Map;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet("/city/edit")
 public class CityEditServlet extends HttpServlet {
+    private final CityService cityService = new CityServiceImpl();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
-        Map<String, Object> city = DBUtil.queryOne("SELECT * FROM city WHERE id = ?", id);
+        int cityId;
+        try {
+            cityId = Integer.parseInt(id);
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        City city = cityService.getCity(cityId);
         req.setAttribute("city", city);
         req.getRequestDispatcher("/city_form.jsp").forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
+        HttpSession session = req.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            resp.sendRedirect(req.getContextPath() + "/login");
+            return;
+        }
         String id = req.getParameter("id");
+        int cityId;
+        try {
+            cityId = Integer.parseInt(id);
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
         String name = req.getParameter("name");
         String province = req.getParameter("province");
-        DBUtil.update("UPDATE city SET name = ?, province = ? WHERE id = ?", name, province, id);
-        resp.sendRedirect("list");
+        City city = new City();
+        city.setId(cityId);
+        city.setName(name);
+        city.setProvince(province);
+        boolean success = cityService.updateCity(city, user.getId());
+        session.setAttribute("message", success ? "城市修改成功" : "城市修改失败，请重试");
+        resp.sendRedirect(req.getContextPath() + "/city/list");
     }
 }

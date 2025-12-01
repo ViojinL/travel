@@ -15,13 +15,27 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-@WebServlet("/attraction/add")
-public class AttractionAddServlet extends HttpServlet {
+@WebServlet("/attraction/edit")
+public class AttractionEditServlet extends HttpServlet {
     private final AttractionService attractionService = new AttractionServiceImpl();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String cityId = req.getParameter("cityId");
-        req.setAttribute("cityId", cityId);
+        String idParam = req.getParameter("id");
+        int id;
+        try {
+            id = Integer.parseInt(idParam);
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        Attraction attraction = attractionService.getDetail(id);
+        if (attraction == null) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+        req.setAttribute("attraction", attraction);
+        req.setAttribute("cityId", attraction.getCityId());
         req.getRequestDispatcher("/attraction_form.jsp").forward(req, resp);
     }
 
@@ -34,20 +48,35 @@ public class AttractionAddServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
         }
-        String cityId = req.getParameter("cityId");
+        String idParam = req.getParameter("id");
+        String cityIdParam = req.getParameter("cityId");
         String name = req.getParameter("name");
         String priceStr = req.getParameter("price");
         String description = req.getParameter("description");
-        BigDecimal price = new BigDecimal(priceStr);
-
+        int id;
+        int cityId;
+        try {
+            id = Integer.parseInt(idParam);
+            cityId = Integer.parseInt(cityIdParam);
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        BigDecimal price;
+        try {
+            price = new BigDecimal(priceStr);
+        } catch (NumberFormatException e) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
         Attraction attraction = new Attraction();
-        attraction.setCityId(Integer.parseInt(cityId));
+        attraction.setId(id);
+        attraction.setCityId(cityId);
         attraction.setName(name);
         attraction.setPrice(price);
         attraction.setDescription(description);
-        boolean success = attractionService.createAttraction(attraction, user.getId());
-        session.setAttribute("message", success ? "景点新建成功" : "景点新建失败，请重试");
-
+        boolean success = attractionService.updateAttraction(attraction, user.getId());
+        session.setAttribute("message", success ? "景点编辑成功" : "景点编辑失败，请重试");
         resp.sendRedirect(req.getContextPath() + "/attraction/list?cityId=" + cityId);
     }
 }

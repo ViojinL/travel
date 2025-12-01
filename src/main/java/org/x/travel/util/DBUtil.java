@@ -1,26 +1,40 @@
 package org.x.travel.util;
 
-import java.sql.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 public class DBUtil {
-    private static final String URL = "jdbc:mysql://localhost:3306/traveldb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
-    private static final String USER = "root";
-    private static final String PASSWORD = "root";
+    private static final Properties PROPS = new Properties();
 
     static {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        try (InputStream is = DBUtil.class.getClassLoader().getResourceAsStream("db.properties")) {
+            if (is == null) {
+                throw new IllegalStateException("db.properties not found on classpath");
+            }
+            PROPS.load(is);
+            Class.forName(PROPS.getProperty("jdbc.driver"));
+        } catch (IOException | ClassNotFoundException e) {
+            throw new ExceptionInInitializerError(e);
         }
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        String url = PROPS.getProperty("jdbc.url");
+        String username = PROPS.getProperty("jdbc.username");
+        String password = PROPS.getProperty("jdbc.password");
+        return DriverManager.getConnection(url, username, password);
     }
 
     public static void close(Connection conn, Statement stmt, ResultSet rs) {
@@ -32,7 +46,7 @@ public class DBUtil {
             if (conn != null)
                 conn.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("Failed to close JDBC resources: " + e.getMessage());
         }
     }
 
@@ -47,8 +61,7 @@ public class DBUtil {
             }
             return pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
-            return 0;
+            throw new RuntimeException("Failed to execute update", e);
         } finally {
             close(conn, pstmt, null);
         }
@@ -76,7 +89,7 @@ public class DBUtil {
                 list.add(row);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to execute query", e);
         } finally {
             close(conn, pstmt, rs);
         }

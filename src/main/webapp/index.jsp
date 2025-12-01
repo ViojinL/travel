@@ -1,16 +1,34 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <!DOCTYPE html>
-    <html>
+<head>
+    <title>城市景点管理系统</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/common.css">
+    <style>
+        header {
+            margin-bottom: 24px;
+        }
 
-    <head>
-        <title>JSP - Hello World</title>
-    </head>
+        nav a {
+            color: #007acc;
+            text-decoration: none;
+            font-weight: bold;
+        }
 
-    <body>
-        <h2>欢迎使用旅游景点管理系统</h2>
-        <a href="city/list">管理城市</a>
-        <br />
-        <a href="hello-servlet">Hello Servlet</a>
-    </body>
+        nav a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
 
-    </html>
+<body>
+    <header>
+        <h1>旅游景点管理系统</h1>
+        <p>对城市和景点进行增删改查，上传景点图片，统一通过表单+Servlet提交完成操作。</p>
+    </header>
+    <nav>
+        <a class="action-btn" href="${pageContext.request.contextPath}/login">登录进入系统</a>
+    </nav>
+        <a href="${pageContext.request.contextPath}/login">登录进入系统</a>
+    </nav>
+</body>
+
+</html>
